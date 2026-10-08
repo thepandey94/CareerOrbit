@@ -81,6 +81,21 @@ CareerOrbit is a production-grade, full-stack, AI-assisted career preparation pl
   * Pseudoscience (micro-expression emotion detection, lie detection) is strictly banned.
   * Dual evaluation engine: Google Gemini 2.5 Flash (`@google/genai`) with truthful fallback to a deterministic heuristic speech and transcript analyzer.
 
+### Phase 5: Dashboard, Progress Tracking & Gamification
+* **Comprehensive Student Dashboard (`/dashboard`):**
+  * **Composite Job-Readiness Score:** Weighted calculation using 40% Technical, 30% Aptitude, and 30% Communication.
+  * **Strict Incomplete Rule:** If any required assessment is missing, displays score as `Incomplete` rather than falsely deflating scores by treating missing assessments as 0%. Provides direct CTAs to take missing assessments.
+  * **Persistent Progress Tracking:** Displays completed levels, roadmap tasks, assessment history, and progress trends across sessions and devices.
+  * **Weak Topic Diagnostics:** Automatically analyzes performance across assessments to highlight specific weak topics and generate personalized practice recommendations.
+* **Progress & Gamification (Privacy-Preserved):**
+  * **Flexible Streaks & Freeze Protection:** Compares UTC calendar days and automatically utilizes an available streak freeze for a 1-day absence, keeping students encouraged.
+  * **9 Genuine Milestone Badges:** Awarded strictly on actual database activities (e.g. `First Step`, `Diagnostic Explorer`, `Knowledge Seeker`, `Code Warrior`, `Logic Master`, `Confident Speaker`, `Triple Crown`, `7-Day Habit`).
+  * **Student Privacy:** No public profiles or leaderboards. All progress and metrics remain strictly private to the student.
+* **Administrative Management Portal (`/admin`):**
+  * **Platform Usage Analytics:** Real-time visibility into active users, career track distributions, completed roadmaps, and assessment pass rates.
+  * **Question Review & Verification Pipeline:** Review AI-generated and pending questions (`PENDING`, `APPROVED`, `REJECTED`) with administrative verification notes before they enter the student question bank.
+  * **Server-Side Authorization & Audit Trail:** Strict RBAC checks (`AdminService.requireAdmin`) and tamper-evident `AuditLog` persistence on all privileged administrative actions.
+
 ---
 
 ## 🚀 Quickstart & Local Setup

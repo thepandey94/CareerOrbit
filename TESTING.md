@@ -52,11 +52,19 @@ npx.cmd vitest
 | `tests/communication_privacy_lifecycle.test.ts` | Validates ephemeral temporary recording storage, verifiable immediate unlinking and deletion, `videoDeletedAt` timestamp generation, and automatic stale file garbage collection. | **Passing (3/3)** |
 | `tests/communication_duration_limits.test.ts` | Validates 5-minute preparation period (300s) and up to 7-minute presentation duration (420s), topic registry catalog integrity, multimodal evaluator pipeline, and audio-only fallback normalization. | **Passing (3/3)** |
 
+### Phase 5: Dashboard, Gamification & Admin Verification Suites
+| Test Suite | Purpose | Status |
+| :--- | :--- | :--- |
+| `tests/dashboard_job_readiness_calculation.test.ts` | Validates 40% Tech / 30% Apt / 30% Comm formula, strict preservation of `null` (incomplete) rather than treating missing tests as 0%, and placement readiness tier classifications. | **Passing (3/3)** |
+| `tests/gamification_streak_and_badges.test.ts` | Validates flexible streak calculation, UTC day comparison, streak freeze consumption on 1 missed day, streak reset on extended absence, and 9 milestone badge registry definitions. | **Passing (9/9)** |
+| `tests/admin_audit_and_question_review.test.ts` | Validates server-side admin role authorization, question verification status transitions (PENDING to APPROVED/REJECTED), and persistence of audit log metadata. | **Passing (4/4)** |
+
 ---
 
 ## 4. Current Test Results
-* **Test Files:** 18 passed (18 total)
-* **Total Assertions/Tests:** 65 passed (65 total)
+* **Test Files:** 21 passed (21 total)
+* **Total Assertions/Tests:** 81 passed (81 total)
 * **Success Rate:** **100%**
 * **Verification Command:** `npm.cmd test`
+
 

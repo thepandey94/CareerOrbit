@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
-import { Compass, User, LogOut, Menu, X, ShieldAlert, Code2, Brain, Terminal, Video } from "lucide-react";
+import { Compass, User, LogOut, Menu, X, ShieldAlert, Code2, Brain, Terminal, Video, LayoutDashboard } from "lucide-react";
 
 interface UserSession {
   id: string;
@@ -52,7 +52,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-600 dark:text-slate-300">
+        <nav className="hidden md:flex items-center gap-4 text-sm font-medium text-slate-600 dark:text-slate-300">
           <Link href="/#tracks" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             Career Tracks
           </Link>
@@ -61,7 +61,10 @@ export function Navbar() {
           </Link>
           {user && (
             <>
-              <Link href="/roadmap" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1">
+              <Link href="/dashboard" className="text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1">
+                <LayoutDashboard className="w-4 h-4" /> Dashboard
+              </Link>
+              <Link href="/roadmap" className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold flex items-center gap-1">
                 <Compass className="w-4 h-4" /> Roadmap
               </Link>
               <Link href="/technical" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold flex items-center gap-1">
@@ -179,9 +182,16 @@ export function Navbar() {
           {user ? (
             <div className="space-y-2">
               <Link
+                href="/dashboard"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-sm font-bold text-blue-600 dark:text-blue-400"
+              >
+                Student Dashboard
+              </Link>
+              <Link
                 href="/roadmap"
                 onClick={() => setIsMenuOpen(false)}
-                className="block text-sm font-semibold text-blue-600 dark:text-blue-400"
+                className="block text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
                 My Roadmap
               </Link>

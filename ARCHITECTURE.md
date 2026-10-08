@@ -242,4 +242,83 @@ $$\text{Overall Score} = \begin{cases}
 1. **Primary: Gemini 2.5 Flash (`@google/genai`):** When `GEMINI_API_KEY` is present, executes structured multimodal evaluation with strict ethical directives.
 2. **Fallback: Heuristic Speech & Transcript Analyzer:** When offline, in testing environments, or when API limits are reached, seamlessly executes deterministic rule-based linguistic and pacing analysis. Always truthfully labeled in the scorecard.
 
+---
+
+## 7. Phase 5: Student Dashboard, Gamification & Admin Portal
+
+### 7.1 Student Dashboard & Job-Readiness Scoring Engine
+
+The Student Dashboard serves as the central command center for career preparation, unifying the student's learning progress, assessment history, and placement readiness into actionable insights.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                   COMPOSITE JOB-READINESS ENGINE                       │
+├────────────────────────────────────────────────────────────────────────┤
+│ Components:                                                            │
+│   • Technical Round (40% Weight)                                      │
+│   • Aptitude Assessment (30% Weight)                                  │
+│   • Communication Presentation (30% Weight)                           │
+│                                                                        │
+│ Incomplete Rule:                                                       │
+│   If Technical, Aptitude, OR Communication is null:                    │
+│   ➔ overallScore = null, isComplete = false, tier = "INCOMPLETE"      │
+│   (Prevents false score deflation from treating missing tests as 0%)   │
+│                                                                        │
+│ When All 3 Pillars Completed:                                          │
+│   overallScore = Round(0.40 × Tech + 0.30 × Apt + 0.30 × Comm)         │
+│   • Elite Tier:              ≥ 85%                                     │
+│   • Strong Tier:             70% – 84%                                 │
+│   • Benchmark Tier:          60% – 69%                                 │
+│   • Revision Required:       < 60%                                     │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Strict Incomplete Preservation:** Missing assessments are never coerced into zero. If a student scored 90% in Technical and 80% in Aptitude but has not delivered a Communication presentation, their score is not falsely calculated as $36 + 24 + 0 = 60\%$. Instead, the system returns `overallScore: null` and clearly highlights the missing pillar with a direct call to action.
+2. **Weak Topic Diagnostics & Smart Recommendations:** Derived from the student's actual database records across diagnostic assessments, technical attempts, aptitude attempts, and communication rubrics.
+3. **Session & Cross-Device Persistence:** All metrics, roadmap task completions, and assessment scores are persisted in PostgreSQL via Prisma, ensuring identical state across devices and re-logins.
+
+### 7.2 Gamification & Flexible Habit Tracking
+
+```
+┌──────────────────────────────────────────────────────────┐
+│              GAMIFICATION & HABIT SYSTEM                 │
+├──────────────────────────────────────────────────────────┤
+│ Flexible Streaks:                                        │
+│   • UTC Calendar Day difference comparison               │
+│   • diffDays <= 0:  Same day (retains streak)            │
+│   • diffDays == 1:  Consecutive day (+1 streak)          │
+│   • diffDays == 2:  1 missed day + freeze available:     │
+│                     (protects streak, consumes 1 freeze) │
+│   • diffDays > 2:   Streak resets to 1                   │
+│                                                          │
+│ 9 Genuine Milestone Badges:                              │
+│   1. First Step (Selected career track)                  │
+│   2. Diagnostic Explorer (Completed skill diagnostic)    │
+│   3. Knowledge Seeker (Finished first roadmap module)    │
+│   4. Milestone Finisher (Finished ≥5 roadmap tasks)      │
+│   5. Code Warrior (Passed Technical Round ≥60%)          │
+│   6. Logic Master (Passed Aptitude Assessment ≥60%)      │
+│   7. Confident Speaker (Passed Communication ≥60%)       │
+│   8. Triple Crown (Passed all 3 assessment pillars)      │
+│   9. 7-Day Habit (Maintained 7-day learning streak)      │
+│                                                          │
+│ Privacy Guarantee:                                       │
+│   • Strictly personal to the authenticated student       │
+│   • NO public profiles or public leaderboard exposures   │
+└──────────────────────────────────────────────────────────┘
+```
+
+1. **Earned Milestones:** Badges are awarded strictly upon verified database events (table counts, passed flags, and profile fields). No fabricated accomplishments or vanity metrics.
+2. **Flexible Streak Protection:** Students receive 1 active streak freeze upon onboarding. If real life causes a 1-day absence, the freeze is consumed automatically to preserve their hard-earned streak without punitive demotivation.
+3. **Privacy First:** Career preparation is personal and vulnerable. No public user leaderboards or competitive ranking lists exist on the platform.
+
+### 7.3 Admin Management & Quality Assurance
+
+The administrative portal (`/admin`) provides authorized staff with governance and monitoring tools:
+
+1. **Platform Metrics & Analytics:** Real-time visibility into user accounts, career track distributions, completed roadmaps, and average scores/pass rates for Technical, Aptitude, and Communication assessments.
+2. **Question Verification Pipeline:** Administrative review of questions (`PENDING`, `APPROVED`, `REJECTED`) before they enter the verified question bank for student assessments.
+3. **Server-Side RBAC Enforcement:** Every administrative API endpoint asserts `AdminService.requireAdmin(session.role)` on the server. Unprivileged requests are immediately rejected with HTTP `403 Forbidden`.
+4. **Tamper-Evident Audit Logging:** Privileged administrative actions (such as approving or rejecting questions) are logged to the `AuditLog` table with administrator ID, timestamp, and before/after metadata.
+
 
