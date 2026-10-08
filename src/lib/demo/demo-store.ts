@@ -230,58 +230,129 @@ class DemoStoreClass {
     return entry.code === code.trim();
   }
 
-  // Demo Dashboard Payload
-  getDashboardData(userId: string) {
-    const user = this.findUserByIdentifier(userId) || DEFAULT_STUDENT;
+  // Demo Dashboard Payload matching StudentDashboardPayload exactly
+  getDashboardData(userId?: string) {
+    const user = (userId ? this.findUserByIdentifier(userId) : null) || DEFAULT_STUDENT;
     return {
       user: {
         id: user.id,
-        fullName: user.fullName,
         userId: user.userId,
+        fullName: user.fullName,
         course: user.course,
         branch: user.branch,
         semester: user.semester,
-        track: "SOFTWARE_ENGINEER",
+        avatarUrl: null,
+      },
+      career: {
+        selectedTrack: "SOFTWARE_ENGINEER",
         targetWeeks: 12,
-        targetDate: new Date(Date.now() + 86400000 * 70).toISOString(),
+        dailyMinutesTarget: 90,
+        diagnosticScores: { dsa: 85, web: 72, systems: 78, problemSolving: 88 },
       },
-      readiness: {
-        overallScore: 74,
-        tier: "JOB_READY",
-        tierDescription: "Strong foundational and practical capability. Suitable for entry-level and junior roles.",
-        breakdown: {
-          roadmapProgressPercent: 50,
-          technicalScorePercent: 88,
-          aptitudeScorePercent: 80,
-          communicationScorePercent: 80,
-        },
-      },
-      streak: {
-        currentStreak: 5,
-        longestStreak: 8,
-        streakFreezeCount: 2,
-        totalPoints: 350,
-      },
-      badges: [
-        { id: "PROFILE_VERIFIED", title: "Identity Confirmed", description: "Completed full academic profile verification" },
-        { id: "FIRST_STREAK", title: "Consistency Spark", description: "Maintained active study streak for 3+ consecutive days" },
-        { id: "EXPLORER", title: "Track Explorer", description: "Completed career diagnostic assessment" },
-      ],
-      currentRoadmap: {
+      roadmap: {
         id: "demo-roadmap-1",
         title: "Software Engineer Preparation Roadmap",
-        track: "SOFTWARE_ENGINEER",
         currentWeek: 2,
         currentDay: 2,
         totalTasks: DEMO_TASKS.length,
         completedTasks: DEMO_TASKS.filter((t) => t.status === "COMPLETED").length,
-        nextTask: DEMO_TASKS.find((t) => t.status === "AVAILABLE") || DEMO_TASKS[0],
+        availableTasks: DEMO_TASKS.filter((t) => t.status === "AVAILABLE").length,
+        progressPercent: 50,
       },
-      recentAssessments: [
-        { type: "TECHNICAL", title: "DSA & Problem Solving Round", score: 22, total: 25, passed: true, date: "2 days ago" },
-        { type: "APTITUDE", title: "Quantitative & Analytical Aptitude", score: 20, total: 25, passed: true, date: "3 days ago" },
-        { type: "COMMUNICATION", title: "Web Architecture Presentation", score: 80, total: 100, passed: true, date: "4 days ago" },
+      jobReadiness: {
+        overallScore: 83,
+        isComplete: true,
+        technical: {
+          score: 88,
+          completed: true,
+          weight: 0.4,
+          status: "88%",
+          passed: true,
+          bestAttemptDate: new Date(Date.now() - 86400000 * 2).toISOString(),
+        },
+        aptitude: {
+          score: 80,
+          completed: true,
+          weight: 0.3,
+          status: "80%",
+          passed: true,
+          bestAttemptDate: new Date(Date.now() - 86400000 * 3).toISOString(),
+        },
+        communication: {
+          score: 80,
+          completed: true,
+          weight: 0.3,
+          status: "80%",
+          passed: true,
+          bestAttemptDate: new Date(Date.now() - 86400000 * 4).toISOString(),
+        },
+        missingComponents: [] as string[],
+        readinessTier: "STRONG" as const,
+        tierDescription: "Interview Ready (Strong Competency). Demonstrates solid aptitude across key interview dimensions.",
+      },
+      weakTopics: [
+        {
+          domain: "TECHNICAL" as const,
+          topic: "Binary Search Trees & Heap Operations",
+          reason: "Continue your daily 90-minute structured study path.",
+          priority: "MEDIUM" as const,
+          actionUrl: "/roadmap",
+          actionLabel: "Resume Roadmap",
+        },
+        {
+          domain: "APTITUDE" as const,
+          topic: "Permutations & Combinations",
+          reason: "Identified in recent diagnostic assessment.",
+          priority: "LOW" as const,
+          actionUrl: "/aptitude",
+          actionLabel: "Practice Aptitude",
+        },
       ],
+      recentHistory: [
+        {
+          id: "demo-hist-1",
+          type: "TECHNICAL" as const,
+          title: "Technical Round (Level 1)",
+          score: 22,
+          maxScore: 25,
+          passed: true,
+          date: new Date(Date.now() - 86400000 * 2).toISOString(),
+        },
+        {
+          id: "demo-hist-2",
+          type: "APTITUDE" as const,
+          title: "Aptitude Assessment (25 Qs)",
+          score: 20,
+          maxScore: 25,
+          passed: true,
+          date: new Date(Date.now() - 86400000 * 3).toISOString(),
+        },
+        {
+          id: "demo-hist-3",
+          type: "COMMUNICATION" as const,
+          title: "Web Architecture Presentation",
+          score: 80,
+          maxScore: 100,
+          passed: true,
+          date: new Date(Date.now() - 86400000 * 4).toISOString(),
+        },
+      ],
+      gamification: {
+        currentStreak: 5,
+        longestStreak: 8,
+        streakFreezeCount: 2,
+        totalPoints: 1450,
+        earnedBadges: [
+          { id: "PROFILE_VERIFIED", title: "Identity Confirmed", description: "Completed full academic profile verification", icon: "ShieldCheck", earnedAt: new Date().toISOString() },
+          { id: "FIRST_STREAK", title: "Consistency Spark", description: "Maintained active study streak for 3+ consecutive days", icon: "Flame", earnedAt: new Date().toISOString() },
+          { id: "EXPLORER", title: "Track Explorer", description: "Completed career diagnostic assessment", icon: "Compass", earnedAt: new Date().toISOString() },
+        ],
+        allAvailableBadges: [
+          { id: "PROFILE_VERIFIED", title: "Identity Confirmed", description: "Completed full academic profile verification", icon: "ShieldCheck" },
+          { id: "FIRST_STREAK", title: "Consistency Spark", description: "Maintained active study streak for 3+ consecutive days", icon: "Flame" },
+          { id: "EXPLORER", title: "Track Explorer", description: "Completed career diagnostic assessment", icon: "Compass" },
+        ],
+      },
       isDemoMode: true,
     };
   }
@@ -294,7 +365,64 @@ class DemoStoreClass {
       track: "SOFTWARE_ENGINEER",
       currentWeek: 2,
       currentDay: 2,
+      progressPercentage: 50,
+      totalTasks: DEMO_TASKS.length,
+      completedTasks: DEMO_TASKS.filter((t) => t.status === "COMPLETED").length,
       tasks: DEMO_TASKS,
+      isDemoMode: true,
+    };
+  }
+
+  // Demo Aptitude Overview
+  getAptitudeOverview() {
+    return {
+      totalAttempts: 1,
+      passedAttempts: 1,
+      bestScore: 20,
+      latestAttempt: {
+        id: "demo-apt-1",
+        level: 1,
+        score: 20,
+        totalQuestions: 25,
+        passed: true,
+        status: "SUBMITTED",
+        submittedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+      },
+      structure: {
+        totalQuestions: 25,
+        durationMinutes: 45,
+        passingThresholdScore: 15,
+        passingThresholdPercent: 60,
+        distribution: [
+          { section: "Quantitative Aptitude", count: 10, topics: "Percentages, Ratios, Time & Work" },
+          { section: "Logical Reasoning", count: 8, topics: "Number Series, Syllogisms, Coding-Decoding" },
+          { section: "Verbal Ability", count: 7, topics: "Vocabulary, Sentence Correction" },
+        ],
+      },
+      isDemoMode: true,
+    };
+  }
+
+  // Demo Communication Overview
+  getCommunicationHistory() {
+    return {
+      submissions: [
+        {
+          id: "demo-comm-1",
+          topicTitle: "Explain the Architecture of a Web Application",
+          overallScore: 80,
+          passed: true,
+          durationSeconds: 240,
+          status: "COMPLETED",
+          createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
+        },
+      ],
+      stats: {
+        totalAttempts: 1,
+        passedCount: 1,
+        passRatePercent: 100,
+        averageScore: 80,
+      },
       isDemoMode: true,
     };
   }

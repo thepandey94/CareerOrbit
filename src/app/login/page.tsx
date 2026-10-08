@@ -33,11 +33,11 @@ export default function LoginPage() {
         return;
       }
 
-      // If administrator, route to /admin, else route to /profile
+      // If administrator, route to /admin, else route to /dashboard
       if (data.user?.role === "ADMIN") {
         window.location.href = "/admin";
       } else {
-        window.location.href = "/profile";
+        window.location.href = "/dashboard";
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to sign in.");

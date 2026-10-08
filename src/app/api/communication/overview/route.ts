@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 import { COMMUNICATION_TOPICS } from "@/lib/communication/topics";
 import { getUserCommunicationHistory } from "@/lib/services/communication-service";
+import { env } from "@/lib/env";
+import { demoStore } from "@/lib/demo/demo-store";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,7 +12,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
-    const history = await getUserCommunicationHistory(session.user.id);
+    let history: { submissions: any[]; stats: any };
+    try {
+      history = await getUserCommunicationHistory(session.user.id);
+    } catch (dbErr) {
+      if (env.DEMO_MODE) {
+        history = demoStore.getCommunicationHistory();
+      } else {
+        throw dbErr;
+      }
+    }
 
     return NextResponse.json(
       {

@@ -10,6 +10,9 @@ const updateProfileSchema = z.object({
   semester: z.number().int().min(1).max(12),
 });
 
+import { env } from "@/lib/env";
+import { demoStore } from "@/lib/demo/demo-store";
+
 export async function GET() {
   try {
     const session = await getSession();
@@ -17,8 +20,28 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
-    const profile = await UserService.getProfile(session.user.id);
-    return NextResponse.json({ user: profile }, { status: 200 });
+    try {
+      const profile = await UserService.getProfile(session.user.id);
+      return NextResponse.json({ user: profile }, { status: 200 });
+    } catch (err: unknown) {
+      if (env.DEMO_MODE) {
+        const demoUser = demoStore.findUserByIdentifier(session.user.id) || demoStore.findUserByIdentifier(session.user.userId) || {
+          id: session.user.id,
+          email: session.user.email,
+          userId: session.user.userId,
+          fullName: session.user.fullName,
+          course: "B.Tech",
+          branch: "Computer Science",
+          semester: 6,
+          role: session.user.role,
+          avatarUrl: null,
+          accountStatus: "ACTIVE",
+          createdAt: new Date().toISOString(),
+        };
+        return NextResponse.json({ user: demoUser }, { status: 200 });
+      }
+      throw err;
+    }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Failed to fetch profile.";
     return NextResponse.json({ error: message }, { status: 500 });
