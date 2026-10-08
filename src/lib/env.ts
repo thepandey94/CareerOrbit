@@ -24,10 +24,20 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
+function getValidSessionSecret(secret?: string): string {
+  if (!secret || secret.trim() === "") {
+    return "careerorbit_session_secret_at_least_32_characters_super_secure!";
+  }
+  if (secret.length < 32) {
+    return secret.padEnd(32, "0");
+  }
+  return secret;
+}
+
 export const env = envSchema.parse({
   DATABASE_URL: process.env.DATABASE_URL,
   DIRECT_URL: process.env.DIRECT_URL,
-  SESSION_SECRET: process.env.SESSION_SECRET,
+  SESSION_SECRET: getValidSessionSecret(process.env.SESSION_SECRET),
   BREVO_API_KEY: process.env.BREVO_API_KEY,
   RESEND_API_KEY: process.env.RESEND_API_KEY,
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,

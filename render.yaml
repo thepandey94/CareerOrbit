@@ -3,14 +3,16 @@ services:
     name: careerorbit
     runtime: node
     plan: free
-    buildCommand: npm install && npx prisma generate && npm run build
-    startCommand: npm run start
+    buildCommand: npm install --include=dev && npx prisma generate && npm run build
+    startCommand: npx next start -H 0.0.0.0 -p $PORT
     envVars:
+      - key: NODE_VERSION
+        value: "22"
       - key: NODE_ENV
         value: production
       - key: DEMO_MODE
         value: "true"
       - key: SESSION_SECRET
-        generateValue: true
+        value: careerorbit_session_secret_at_least_32_characters_super_secure!
       - key: ADMIN_SETUP_SECRET
         value: careerorbit_admin_initial_secret_change_in_production

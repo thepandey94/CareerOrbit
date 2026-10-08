@@ -5,11 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -H 0.0.0.0",
     "lint": "eslint",
     "test": "vitest run",
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "dependencies": {
     "@google/genai": "^2.28.0",
