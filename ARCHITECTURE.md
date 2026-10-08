@@ -70,5 +70,58 @@ CareerOrbit uses a unified full-stack architecture built on **Next.js 16.4.0 (Ap
 
 * `src/app/api/*`: HTTP transport layer. Parses JSON, executes Zod schema validation, calls service layer, and returns standardized JSON responses.
 * `src/lib/services/*`: Pure business logic. Handles transactions, cooldown checks, and database mutations.
+* `src/lib/onboarding/*`: Career track specifications, transparent compatibility scoring rubric, and diagnostic assessments.
+* `src/lib/roadmap/*`: Curriculum definitions, verified resource metadata, timeline estimation, and prerequisite state machine.
+* `src/lib/ai/*`: Google Gemini 2.5 Flash integration, academic integrity guardrails, and deterministic offline content fallback.
 * `src/lib/auth/*`: Security primitives. Password hashing (Argon2id), OTP generation, and session serialization.
 * `src/lib/db.ts`: Database connection singleton. Manages connection pooling via driver adapter.
+
+---
+
+## 4. Phase 2: Career Onboarding & Learning Architecture
+
+### 4.1 Career Compatibility Scoring Engine
+1. **Input Vectors:**
+   - 6-dimension questionnaire answers (interests, problem-solving preferences, work output pride, curiosity triggers).
+   - 6-item skill self-assessment matrix (Java, Python, JavaScript, SQL, C++, HTML/CSS rated 1–5).
+2. **Transparent Formula:**
+   $$\text{Total Score} = \min\left(100, \text{Questionnaire Points (max 60)} + \text{Skill Points (max 40)}\right)$$
+3. **Guidance Guarantee:**
+   - Evaluated purely as educational guidance.
+   - Low initial scores never restrict students from choosing any career track.
+
+### 4.2 Sequential Roadmap & Prerequisite State Machine
+```
+[Day 1 Learning Task] (status: AVAILABLE)
+        │ (Completed by student)
+        ▼
+[Day 1 Practice Task] (status: AVAILABLE)
+        │ (Completed by student)
+        ▼
+[Day 1 Daily Assessment] (status: AVAILABLE)
+        │ (Scored on server >= 60%)
+        ▼
+[Day 2 Learning Task] (transition: LOCKED -> AVAILABLE)
+```
+- Each task explicitly evaluates its `prerequisites` array against the user's roadmap state.
+- Locked tasks display explicit guidance indicating which specific module must be completed first.
+
+### 4.3 AI Study Tutor & Academic Integrity Guardrail
+```
+[Student Question] ───> [Academic Integrity Guardrail]
+                                  │
+                  ┌───────────────┴───────────────┐
+                  ▼                               ▼
+       (Active Exam / Cheat Attempt)     (Conceptual Question)
+                  │                               │
+                  ▼                               ▼
+      [Refuse Direct Solutions]          [Check GEMINI_API_KEY]
+      [Offer Conceptual Mentor Advice]            │
+                                       ┌──────────┴──────────┐
+                                       ▼                     ▼
+                                [Gemini 2.5 Flash]    [Verified Content]
+                                (Live Multimodal)     (Offline Knowledge Base)
+```
+1. Active assessment mode and cheat query patterns are intercepted before reaching the LLM.
+2. The tutor explains underlying concepts, provides real-world analogies, and debugs logic without solving exam questions.
+3. If `GEMINI_API_KEY` is omitted or encounters network/rate limits, the application serves curated, verified knowledge base responses with truthful provider labeling.

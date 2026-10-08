@@ -62,6 +62,11 @@ export function Navbar() {
           <Link href="/#method" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             Our Method
           </Link>
+          {user && (
+            <Link href="/roadmap" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1">
+              <Compass className="w-4 h-4" /> My Roadmap
+            </Link>
+          )}
           {user?.role === "ADMIN" && (
             <Link href="/admin" className="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 hover:underline">
               <ShieldAlert className="w-4 h-4" /> Admin Portal
@@ -163,9 +168,23 @@ export function Navbar() {
           {user ? (
             <div className="space-y-2">
               <Link
+                href="/roadmap"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-sm font-semibold text-blue-600 dark:text-blue-400"
+              >
+                My Roadmap
+              </Link>
+              <Link
+                href="/onboarding"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-sm font-medium text-slate-700 dark:text-slate-200"
+              >
+                Career Exploration
+              </Link>
+              <Link
                 href="/profile"
                 onClick={() => setIsMenuOpen(false)}
-                className="block text-sm font-medium text-blue-600 dark:text-blue-400"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-200"
               >
                 Profile (@{user.userId})
               </Link>

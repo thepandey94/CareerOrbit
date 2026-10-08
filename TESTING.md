@@ -16,8 +16,9 @@ Run tests in watch mode during development:
 npx.cmd vitest
 ```
 
-## 3. Phase 1 Test Suites
+## 3. Test Suites & Coverage Matrix
 
+### Phase 1: Foundation Suites
 | Test Suite | Purpose | Status |
 | :--- | :--- | :--- |
 | `tests/auth_registration_otp.test.ts` | Validates 6-digit cryptographic OTP generation, salted SHA-256 hashing, timing-safe verification, and attempt limits. | **Passing (5/5)** |
@@ -26,4 +27,19 @@ npx.cmd vitest
 | `tests/auth_account_deletion.test.ts` | Validates 14-day grace period boundaries, active cancellation state, and purge readiness. | **Passing (3/3)** |
 | `tests/admin_rbac_guard.test.ts` | Validates server-side role assertion, granting access to `ADMIN` and throwing HTTP 403 on non-admin roles. | **Passing (2/2)** |
 
-**Total Phase 1 Tests:** 17 passed (100% pass rate).
+### Phase 2: Career Onboarding & Learning Suites
+| Test Suite | Purpose | Status |
+| :--- | :--- | :--- |
+| `tests/career_compatibility_scoring.test.ts` | Validates transparent compatibility scoring weights, bounds [0, 100], factor derivations, and guidance disclaimers. | **Passing (5/5)** |
+| `tests/roadmap_generator_timeline.test.ts` | Validates 90-minute daily workload distributions, 12-week schedule projections, and compressed deadline warning logic. | **Passing (3/3)** |
+| `tests/roadmap_prerequisite_lock.test.ts` | Validates initial Day 1 unlocking, sequential prerequisite enforcement on Day 2, and automatic unlock propagation upon module completion. | **Passing (4/4)** |
+| `tests/assessment_scoring_threshold.test.ts` | Validates 60% passing threshold arithmetic (3/5 passes, 2/5 fails) and multi-skill diagnostic gap analysis. | **Passing (2/2)** |
+| `tests/ai_tutor_guardrail.test.ts` | Validates conceptual guidance, strict refusal during active assessments/exam cheating queries, and deterministic verified-content fallback. | **Passing (5/5)** |
+
+---
+
+## 4. Current Test Results
+* **Test Files:** 10 passed (10 total)
+* **Total Assertions/Tests:** 36 passed (36 total)
+* **Success Rate:** **100%**
+* **Verification Command:** `npm.cmd test`

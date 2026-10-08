@@ -6,8 +6,9 @@ CareerOrbit is a production-grade, full-stack, AI-assisted career preparation pl
 
 ---
 
-## 🌟 Key Features (Phase 1 Foundation)
+## 🌟 Key Features
 
+### Phase 1: Foundation
 * **Robust Authentication & Security:**
   * Real email verification using 6-digit cryptographic OTPs with 10-minute expiry and rate-limiting.
   * OWASP-standard **Argon2id** password hashing (`@node-rs/argon2`, 64MB memory cost).
@@ -21,10 +22,32 @@ CareerOrbit is a production-grade, full-stack, AI-assisted career preparation pl
 * **Modern Accessible Interface:**
   * Built with **Next.js 16.4.0 (App Router)** and **React 19.3.0**.
   * Coordinated, accessible light/dark theme system with persistent user preference.
-  * Responsive navigation, semantic HTML, and zero fabricated testimonials or placement numbers.
 * **Protected Administrative Control:**
   * Server-side role-based access control (RBAC) on `/admin/*` and administrative API routes.
   * Secure initial admin provisioning via an environment setup secret.
+
+### Phase 2: Career Onboarding & Learning
+* **Career Exploration & Compatibility Scoring:**
+  * Side-by-side exploration of 3 core tracks: **Software Engineer**, **Web Developer**, and **Data Analyst**.
+  * 6-dimension questionnaire exploring daily interests, problem-solving style, and technical curiosities.
+  * Supported skill self-assessments across Java, Python, JavaScript, SQL, C++, and HTML/CSS.
+  * Transparent 0–100 compatibility rubric with contributing factor explanations.
+  * Guidance guarantee: Compatibility scores inform and mentor; low initial scores never block students from choosing any career track.
+* **Diagnostic Baseline Assessment:**
+  * Multi-skill baseline assessment identifying strengths and specific skill gaps without granting unearned stage skips.
+* **Personalized 90-Minute Daily Roadmaps:**
+  * Customized roadmap generator adhering strictly to a sustainable 90-minute daily preparation pace (35m learning, 35m practice, 20m assessment).
+  * Flexible duration (8, 12, 16, 24 weeks) or specific target deadline with realistic workload warnings if compressed.
+* **Prerequisite & Task Locking Engine:**
+  * Sequential unlocking: Day 1 starts `AVAILABLE`; Day 2 remains `LOCKED` with explicit prerequisite explanation until Day 1 is completed.
+  * Downstream tasks unlock automatically when daily assessments pass with $\ge 60\%$.
+* **Hybrid Learning & Verified External Resources:**
+  * In-app conceptual breakdowns and guided exercises.
+  * Curated external resources with verification badges (MDN, Oracle Java Docs, Python.org, PostgreSQL docs, cppreference).
+* **AI Study Tutor with Guardrails & Offline Fallback:**
+  * Powered by **Google Gemini 2.5 Flash** (`@google/genai`) for Socratic conceptual explanations, analogies, and debugging assistance.
+  * **Academic Integrity Guardrail:** Strictly refuses to reveal direct answers or cheat solutions during active assessments.
+  * **Deterministic Offline Fallback:** Seamlessly serves rich, verified subject explanations and mentor tips when external AI is offline or API keys are unconfigured.
 
 ---
 
