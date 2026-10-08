@@ -1,16 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AuthService } from "@/lib/services/auth-service";
 import { getSession } from "@/lib/auth/session";
+import { handleApiError } from "@/lib/errors";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  identifier: z.string().min(1, "Email or User ID is required."),
+  identifier: z.string().trim().min(1, "Email or User ID is required."),
   password: z.string().min(1, "Password is required."),
 });
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Invalid request payload." },
+        { status: 400 }
+      );
+    }
+
     const { identifier, password } = loginSchema.parse(body);
 
     const result = await AuthService.login(identifier, password);
@@ -42,7 +50,7 @@ export async function POST(req: NextRequest) {
       user: session.user,
     }, { status: 200 });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Invalid credentials.";
-    return NextResponse.json({ error: message }, { status: 401 });
+    return handleApiError(err, "Invalid credentials.");
   }
 }
+

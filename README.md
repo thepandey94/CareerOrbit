@@ -111,33 +111,85 @@ CareerOrbit is a production-grade, full-stack, AI-assisted career preparation pl
 
 ---
 
-## 🚀 Quickstart & Local Setup
+## 🏆 Hackathon Demo Prototype (Quickstart)
+
+CareerOrbit has been configured as a polished, reliable **college hackathon prototype**. Evaluators and judges can run and test the complete platform locally without needing to provision external cloud databases, verify third-party email domains, or purchase API subscriptions.
+
+### ⚡ 30-Second Quickstart
+
+```bash
+# 1. Install dependencies
+npm.cmd install
+
+# 2. Run the Next.js local server
+npm.cmd run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your web browser.
+
+---
+
+### 🔑 Instant Demo Access
+
+Visit [http://localhost:3000/login](http://localhost:3000/login) to access the **Hackathon Demo Access** panel:
+
+1. **One-Click Demo Student (`student_orbit`):**
+   * Pre-loaded with an active **Software Engineer** career track.
+   * Day 1 & Day 2 roadmap progress with 50% milestone completion.
+   * Completed Technical Round (88%), Aptitude (80%), and Communication Presentation (80%).
+   * Job Readiness Score calculated at **83% (Tier: STRONG)** with 8 earned milestone badges.
+2. **One-Click Demo Administrator (`admin_orbit`):**
+   * Direct access to the `/admin` portal.
+   * Real-time platform metrics, user activity, and question approval pipeline.
+3. **Manual Login Credentials:**
+   * **Student:** `student_orbit` (or `student@careerorbit.dev`) / `CareerOrbit@2026!`
+   * **Admin:** `admin_orbit` (or `admin@careerorbit.dev`) / `CareerOrbit@Admin2026!`
+4. **Interactive Registration Flow:**
+   * Visit `/register` to test new account creation.
+   * In Demo Mode, the registration screen displays an honest **Demo Mode Active** banner showing the generated 6-digit verification code with a single-click **Auto-fill Code** button (no simulated email claims).
+
+---
+
+### 🔍 Real vs. Simulated Features
+
+| Feature | Status | Implementation Details |
+| :--- | :--- | :--- |
+| **Authentication & Sessions** | **Real** | OWASP Argon2id password hashing, iron-session (AES-256-GCM encrypted cookies), RBAC on admin routes. |
+| **Email Verification** | **Simulated** | Transparent local verification flow. Generates and displays the exact 6-digit OTP in the UI with one-click autofill; never claims an email was dispatched. |
+| **Local Persistence Fallback** | **Real & Resilient** | Connects to PostgreSQL/Neon when available; automatically falls back to an in-memory `demoStore` when offline so the app never crashes. |
+| **Career Track Selection** | **Real** | Software Engineer, Web Developer, and Data Analyst exploration with dynamic compatibility scoring. |
+| **Roadmap & Learning Engine** | **Real** | Sequential prerequisite unlocking, 90-minute daily schedule modules, and verified reference links. |
+| **Technical Round (25 Qs)** | **Real** | Timed 60-minute countdown, multiple coding trials, hidden test-case validation, 60% passing mark. |
+| **Aptitude Practice (25 Qs)** | **Real** | Quantitative, logical, and verbal reasoning modules with timers, scoring, and step-by-step explanations. |
+| **Communication Skills** | **Real & Ethical** | In-browser media recording, live transcript display, and deterministic NLP speech rubric evaluation (WPM, filler words, technical vocabulary). |
+| **Job-Readiness Score** | **Real** | Composite weighted algorithm (40% Technical, 30% Aptitude, 30% Communication) with strict incomplete rules. |
+| **Gamification** | **Real** | Streak tracking, freeze protections, and 9 milestone badges tied to authentic activity. |
+| **Admin Portal** | **Real** | Usage metrics, audit logging, and question bank verification pipeline (`/admin`). |
+
+---
+
+## 🚀 Standard & Production Setup (Optional)
 
 ### 1. Prerequisites
 * **Node.js:** `v20.0.0` or higher (`v24.x` recommended).
 * **npm:** `v10.x` or higher.
-* **PostgreSQL:** A running PostgreSQL database (e.g. Neon, Supabase, or local PostgreSQL).
+* **PostgreSQL (Optional for Demo):** Neon, Supabase, or local PostgreSQL.
 
-### 2. Installation
-Clone the repository and install dependencies:
-```bash
-npm.cmd install
-```
-
-### 3. Environment Configuration
+### 2. Environment Configuration
 Copy `.env.example` to `.env.local`:
 ```bash
 cp .env.example .env.local
 ```
 Update the values in `.env.local`:
 ```env
+DEMO_MODE=true
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/careerorbit?schema=public"
 SESSION_SECRET="careerorbit_session_secret_at_least_32_characters_super_secure!"
 ADMIN_SETUP_SECRET="careerorbit_admin_initial_secret_change_in_production"
 ```
-*(When `RESEND_API_KEY` is omitted during local development, verification OTPs are logged safely to the terminal console).*
+*(When `DEMO_MODE=true` is set, the application operates self-contained without demanding external infrastructure).*
 
-### 4. Prisma Generation & Database Push
+### 3. Prisma Generation & Database Push (When using PostgreSQL)
 Generate the Prisma 7 client:
 ```bash
 npm.cmd run prisma:generate
@@ -146,12 +198,8 @@ Push the schema to your database when ready:
 ```bash
 npx.cmd prisma db push
 ```
-To visually inspect and manage database records in your web browser:
-```bash
-npm.cmd run prisma:studio
-```
 
-### 5. Running the Application
+### 4. Running the Application
 Start the development server:
 ```bash
 npm.cmd run dev

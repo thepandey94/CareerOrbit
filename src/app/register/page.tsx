@@ -23,6 +23,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [demoCode, setDemoCode] = useState<string | null>(null);
   const [userIdStatus, setUserIdStatus] = useState<{ available?: boolean; error?: string; suggestions?: string[] } | null>(null);
 
   // Step 1: Send OTP
@@ -43,7 +44,10 @@ export default function RegisterPage() {
         throw new Error(data.error || "Failed to send verification code.");
       }
 
-      setSuccessMessage("Verification code dispatched! Please check your email.");
+      if (data.demoCode) {
+        setDemoCode(data.demoCode);
+      }
+      setSuccessMessage(data.message || "Verification code dispatched! Please check your email.");
       setStep(2);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred.");
@@ -208,6 +212,30 @@ export default function RegisterPage() {
         {/* STEP 2: Verify OTP */}
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} className="space-y-4">
+            {demoCode && (
+              <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-900 dark:text-amber-200 text-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="px-2 py-0.5 rounded bg-amber-200 dark:bg-amber-800 text-[10px] font-bold uppercase tracking-wider">
+                    Demo Mode Active
+                  </span>
+                  <span className="text-[11px] text-amber-700 dark:text-amber-300">Local Simulation</span>
+                </div>
+                <p className="text-amber-800 dark:text-amber-300">
+                  Verification simulated locally (no actual email dispatched). Use this demo code:
+                </p>
+                <div className="flex items-center justify-between bg-white dark:bg-slate-900 px-3 py-2 rounded-lg border border-amber-200 dark:border-amber-800">
+                  <span className="font-mono text-lg font-bold tracking-widest text-amber-900 dark:text-amber-100">{demoCode}</span>
+                  <button
+                    type="button"
+                    onClick={() => setOtp(demoCode)}
+                    className="px-2.5 py-1 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-md transition-colors"
+                  >
+                    Auto-fill Code
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="otp-input">
                 6-Digit Verification Code

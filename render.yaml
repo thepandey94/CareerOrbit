@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: careerorbit
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DEMO_MODE
+        value: "true"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_SETUP_SECRET
+        value: careerorbit_admin_initial_secret_change_in_production

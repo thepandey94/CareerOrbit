@@ -41,7 +41,23 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b backdrop-blur-md transition-colors bg-white/80 dark:bg-slate-900/80 border-slate-200 dark:border-slate-800">
+    <div className="sticky top-0 z-50 w-full">
+      {/* Hackathon Demo Indicator Banner */}
+      <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white text-xs py-1 px-4 text-center flex items-center justify-center gap-2 sm:gap-3 shadow-xs">
+        <span className="font-semibold flex items-center gap-1.5 text-[11px] sm:text-xs">
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          College Hackathon Demo Mode
+        </span>
+        <span className="hidden sm:inline text-blue-200">|</span>
+        <span className="hidden sm:inline text-blue-100 text-[11px]">
+          Local simulated environment &bull; One-click entry on{" "}
+          <Link href="/login" className="underline font-bold text-white hover:text-blue-100">
+            Login Page
+          </Link>
+        </span>
+      </div>
+
+      <header className="w-full border-b backdrop-blur-md transition-colors bg-white/90 dark:bg-slate-900/90 border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight text-blue-600 dark:text-blue-400">
@@ -266,5 +282,6 @@ export function Navbar() {
         </div>
       )}
     </header>
+    </div>
   );
 }

@@ -82,6 +82,17 @@ export default function RoadmapDashboardPage() {
     );
   }
 
+  if (!roadmapData || !roadmapData.profile || !roadmapData.roadmap) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+        <div className="flex flex-col items-center gap-3">
+          <Compass className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">Loading your personalized roadmap...</p>
+        </div>
+      </div>
+    );
+  }
+
   const { profile, roadmap } = roadmapData;
   const trackInfo = CAREER_TRACKS[profile.selectedTrack as keyof typeof CAREER_TRACKS];
 

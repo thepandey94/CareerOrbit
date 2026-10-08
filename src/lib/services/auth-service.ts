@@ -3,6 +3,9 @@ import { generateOtp, verifyOtpCode, MAX_OTP_ATTEMPTS, OTP_COOLDOWN_SECONDS } fr
 import { hashPassword, verifyPassword, validatePasswordStrength } from "../auth/password";
 import { sendOtpEmail } from "../email/service";
 import { Role, AccountStatus, VerificationType } from "@prisma/client";
+import { ConflictError, RateLimitError, NotFoundError, UnauthorizedError } from "../errors";
+import { env } from "../env";
+import { demoStore } from "../demo/demo-store";
 
 export const USER_ID_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
 export const USER_ID_COOLDOWN_DAYS = 90;
@@ -30,44 +33,62 @@ export class AuthService {
     const normalizedEmail = email.trim().toLowerCase();
 
     // Check if email already belongs to an active account
-    const existingUser = await prisma.user.findUnique({
-      where: { email: normalizedEmail },
-    });
+    try {
+      const existingUser = await prisma.user.findUnique({
+        where: { email: normalizedEmail },
+      });
 
-    if (existingUser) {
-      throw new Error("An account with this email address already exists. Please log in.");
+      if (existingUser) {
+        throw new ConflictError("An account with this email address already exists. Please log in.");
+      }
+    } catch (err) {
+      if (err instanceof ConflictError) throw err;
+      if (!env.DEMO_MODE) throw err;
     }
 
     // Cooldown check on recent OTPs
-    const recentVerification = await prisma.emailVerification.findFirst({
-      where: {
-        email: normalizedEmail,
-        type: VerificationType.REGISTRATION,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    try {
+      const recentVerification = await prisma.emailVerification.findFirst({
+        where: {
+          email: normalizedEmail,
+          type: VerificationType.REGISTRATION,
+        },
+        orderBy: { createdAt: "desc" },
+      });
 
-    if (recentVerification) {
-      const elapsedSeconds = (Date.now() - recentVerification.createdAt.getTime()) / 1000;
-      if (elapsedSeconds < OTP_COOLDOWN_SECONDS) {
-        const waitSeconds = Math.ceil(OTP_COOLDOWN_SECONDS - elapsedSeconds);
-        throw new Error(`Please wait ${waitSeconds} seconds before requesting a new verification code.`);
+      if (recentVerification) {
+        const elapsedSeconds = (Date.now() - recentVerification.createdAt.getTime()) / 1000;
+        if (elapsedSeconds < OTP_COOLDOWN_SECONDS) {
+          const waitSeconds = Math.ceil(OTP_COOLDOWN_SECONDS - elapsedSeconds);
+          throw new RateLimitError(`Please wait ${waitSeconds} seconds before requesting a new verification code.`);
+        }
       }
+    } catch (err) {
+      if (err instanceof RateLimitError) throw err;
+      if (!env.DEMO_MODE) throw err;
     }
 
     const { code, hash, expiresAt } = generateOtp();
 
-    // Store in DB
-    await prisma.emailVerification.create({
-      data: {
-        email: normalizedEmail,
-        otpHash: hash,
-        type: VerificationType.REGISTRATION,
-        expiresAt,
-      },
-    });
+    // Store in Demo Store
+    demoStore.generateOtp(normalizedEmail);
 
-    // Deliver OTP
+    // Store in DB if accessible
+    try {
+      await prisma.emailVerification.create({
+        data: {
+          email: normalizedEmail,
+          otpHash: hash,
+          type: VerificationType.REGISTRATION,
+          expiresAt,
+        },
+      });
+    } catch (dbErr) {
+      if (!env.DEMO_MODE) throw dbErr;
+      console.warn("[AuthService] Database offline, proceeding with local demo OTP verification.");
+    }
+
+    // Deliver OTP (or simulate if Demo Mode)
     await sendOtpEmail({
       to: normalizedEmail,
       code,
@@ -77,6 +98,8 @@ export class AuthService {
     return {
       success: true,
       message: "Verification code sent to your email.",
+      demoCode: env.DEMO_MODE ? code : undefined,
+      isDemoMode: env.DEMO_MODE,
     };
   }
 
@@ -86,46 +109,63 @@ export class AuthService {
   static async verifyRegistrationOtp(email: string, code: string) {
     const normalizedEmail = email.trim().toLowerCase();
 
-    const verification = await prisma.emailVerification.findFirst({
-      where: {
-        email: normalizedEmail,
-        type: VerificationType.REGISTRATION,
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!verification) {
-      throw new Error("No verification code found. Please request a new code.");
-    }
-
-    if (new Date() > verification.expiresAt) {
-      throw new Error("Verification code has expired. Please request a new code.");
-    }
-
-    if (verification.attempts >= MAX_OTP_ATTEMPTS) {
-      throw new Error("Too many failed attempts. This code is invalidated. Please request a new one.");
-    }
-
-    const isValid = verifyOtpCode(code, verification.otpHash);
-
-    if (!isValid) {
-      await prisma.emailVerification.update({
-        where: { id: verification.id },
-        data: { attempts: { increment: 1 } },
+    // Try DB verification first
+    try {
+      const verification = await prisma.emailVerification.findFirst({
+        where: {
+          email: normalizedEmail,
+          type: VerificationType.REGISTRATION,
+        },
+        orderBy: { createdAt: "desc" },
       });
-      const remaining = MAX_OTP_ATTEMPTS - (verification.attempts + 1);
-      throw new Error(`Invalid code. ${remaining} attempts remaining.`);
+
+      if (verification) {
+        if (new Date() > verification.expiresAt) {
+          throw new Error("Verification code has expired. Please request a new code.");
+        }
+
+        if (verification.attempts >= MAX_OTP_ATTEMPTS) {
+          throw new Error("Too many failed attempts. This code is invalidated. Please request a new one.");
+        }
+
+        const isValid = verifyOtpCode(code, verification.otpHash);
+
+        if (!isValid) {
+          await prisma.emailVerification.update({
+            where: { id: verification.id },
+            data: { attempts: { increment: 1 } },
+          });
+          const remaining = MAX_OTP_ATTEMPTS - (verification.attempts + 1);
+          throw new Error(`Invalid code. ${remaining} attempts remaining.`);
+        }
+
+        await prisma.emailVerification.update({
+          where: { id: verification.id },
+          data: { verifiedAt: new Date() },
+        });
+
+        return {
+          success: true,
+          message: "Email successfully verified.",
+        };
+      }
+    } catch (err: unknown) {
+      if (!env.DEMO_MODE) throw err;
     }
 
-    await prisma.emailVerification.update({
-      where: { id: verification.id },
-      data: { verifiedAt: new Date() },
-    });
+    // Demo Mode fallback: verify via demoStore or master code 123456
+    if (env.DEMO_MODE) {
+      const verified = demoStore.verifyOtp(normalizedEmail, code) || code === "123456";
+      if (verified) {
+        return {
+          success: true,
+          message: "Email successfully verified (Demo Mode).",
+          isDemoMode: true,
+        };
+      }
+    }
 
-    return {
-      success: true,
-      message: "Email successfully verified.",
-    };
+    throw new NotFoundError("Invalid or expired verification code. Please request a new code.");
   }
 
   /**
@@ -272,13 +312,14 @@ export class AuthService {
 
     // Generic error message prevents account enumeration
     if (!user) {
-      throw new Error("Invalid email/user ID or password.");
+      throw new UnauthorizedError("Invalid email/user ID or password.");
     }
 
     const isMatch = await verifyPassword(user.passwordHash, passwordCandidate);
     if (!isMatch) {
-      throw new Error("Invalid email/user ID or password.");
+      throw new UnauthorizedError("Invalid email/user ID or password.");
     }
+
 
     // Check account deletion status
     if (user.accountStatus === AccountStatus.PENDING_DELETION) {
@@ -303,6 +344,49 @@ export class AuthService {
         role: user.role,
         accountStatus: user.accountStatus,
       },
+    };
+  }
+
+  /**
+   * Demo-only direct authentication for hackathon evaluation.
+   */
+  static async demoLogin(role: "student" | "admin" = "student") {
+    if (!env.DEMO_MODE) {
+      throw new UnauthorizedError("Demo login is only available when DEMO_MODE is active.");
+    }
+
+    const identifier = role === "admin" ? "admin_orbit" : "student_orbit";
+
+    // Try finding the pre-seeded account in the database first
+    try {
+      const dbUser = await prisma.user.findFirst({
+        where: { userId: identifier },
+      });
+
+      if (dbUser) {
+        return {
+          id: dbUser.id,
+          email: dbUser.email,
+          userId: dbUser.userId,
+          fullName: dbUser.fullName,
+          role: dbUser.role,
+          accountStatus: dbUser.accountStatus,
+          isDemoMode: true,
+        };
+      }
+    } catch {
+      // Database offline, fall back to local demo store
+    }
+
+    // Fall back to local in-memory demo store
+    const demoUser = demoStore.findUserByIdentifier(identifier);
+    if (!demoUser) {
+      throw new NotFoundError("Demo account not found.");
+    }
+
+    return {
+      ...demoUser,
+      isDemoMode: true,
     };
   }
 
