@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   title: "CareerOrbit — Your journey. Your skills. Your career.",
   description: "AI-assisted career-preparation platform for students. Explore tracks, master roadmaps, and practice technical, aptitude, and communication rounds.",
   keywords: ["career preparation", "software engineering", "web development", "data analysis", "technical assessments"],
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -96,6 +96,19 @@ CareerOrbit is a production-grade, full-stack, AI-assisted career preparation pl
   * **Question Review & Verification Pipeline:** Review AI-generated and pending questions (`PENDING`, `APPROVED`, `REJECTED`) with administrative verification notes before they enter the student question bank.
   * **Server-Side Authorization & Audit Trail:** Strict RBAC checks (`AdminService.requireAdmin`) and tamper-evident `AuditLog` persistence on all privileged administrative actions.
 
+### Phase 6: Testing, Security Hardening & Deployment
+* **Defense-in-Depth Security Hardening:**
+  * **Production Security Headers:** Enforced via `next.config.ts` (HSTS max-age 2 years, CSP, X-Frame-Options: DENY, nosniff, strict-origin Referrer-Policy, Permissions-Policy).
+  * **Path Traversal Sanitization:** `sanitizeStorageKey` neutralizes directory traversal sequences (`../`, `..\`) and dangerous characters in ephemeral storage keys.
+  * **Media Upload MIME Whitelist:** `POST /api/communication/upload` strictly validates uploaded media against web video/audio formats and enforces a 50MB ceiling.
+  * **Hidden Test Case Sanitization:** Hidden test case inputs and expected outputs are never returned to client requests, preventing inspection via browser developer tools.
+  * **Strict Cross-User Data Isolation:** Assessment attempts and presentation scorecards enforce database-level user ownership checks (`record.userId === session.user.id`).
+* **PWA & Offline Resilience:**
+  * **W3C Web App Manifest (`/manifest.webmanifest`):** Configured via `src/app/manifest.ts` with standalone display, orbital brand icon, and custom theme colors.
+  * **Accessible Offline Fallback (`/offline`):** Helpful interface informing students about local cached capabilities vs features requiring live internet connection.
+* **Comprehensive Automated Verification:**
+  * 25 automated test suites with 95 passing tests covering authentication, roadmaps, technical coding rounds, aptitude testing, speech presentation scoring, streaks, badges, admin review, and security hardening.
+
 ---
 
 ## 🚀 Quickstart & Local Setup

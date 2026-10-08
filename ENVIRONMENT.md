@@ -10,6 +10,9 @@ This document lists all environment variables used by CareerOrbit, their purpose
 | `RESEND_API_KEY` | Optional in dev | `re_123456789...` | API key from Resend (https://resend.com) for real OTP delivery. If omitted in development, OTPs are printed to terminal logs. |
 | `EMAIL_FROM` | Yes | `CareerOrbit <onboarding@resend.dev>` | Verified sender email address used for transactional emails. |
 | `ADMIN_SETUP_SECRET`| Yes | *(Random cryptographic string)* | Secret token used to provision the initial administrator at `/admin/setup`. |
+| `GEMINI_API_KEY` | Optional | `AIzaSy...` | Google Gemini API key for AI Study Tutor and multimodal communication analysis. If omitted, platform seamlessly uses rich verified offline fallback models. |
+| `CODE_EXECUTION_ENGINE` | Optional | `piston` / `mock` | Code execution engine for Java and Python. Defaults to `piston` in production and `mock` during automated test runs. |
+| `PISTON_API_URL` | Optional | `https://emkc.org/api/v2/piston` | Endpoint for the isolated Piston code execution sandbox service. |
 | `NODE_ENV` | Yes | `development` / `production` / `test` | Runtime environment mode. Controls cookie `secure` flags and logging verbosity. |
 
 ---

@@ -59,12 +59,21 @@ npx.cmd vitest
 | `tests/gamification_streak_and_badges.test.ts` | Validates flexible streak calculation, UTC day comparison, streak freeze consumption on 1 missed day, streak reset on extended absence, and 9 milestone badge registry definitions. | **Passing (9/9)** |
 | `tests/admin_audit_and_question_review.test.ts` | Validates server-side admin role authorization, question verification status transitions (PENDING to APPROVED/REJECTED), and persistence of audit log metadata. | **Passing (4/4)** |
 
+### Phase 6: Security Hardening & Production Readiness Suites
+| Test Suite | Purpose | Status |
+| :--- | :--- | :--- |
+| `tests/security_storage_path_traversal.test.ts` | Validates storage key sanitization against directory traversal sequences (`../`, `..\`), slashes, and malicious control characters. | **Passing (4/4)** |
+| `tests/security_cross_user_isolation.test.ts` | Validates strict user authorization boundaries across technical attempts, aptitude attempts, and communication scorecards. | **Passing (4/4)** |
+| `tests/security_upload_mime_validation.test.ts` | Validates media upload MIME whitelist (WebM, MP4, WAV, OGG), rejection of executable/unsupported formats with HTTP 415, and 50MB ceiling enforcement with HTTP 413. | **Passing (4/4)** |
+| `tests/pwa_manifest_metadata.test.ts` | Validates W3C Web App Manifest configuration, standalone display, branding colors, and home screen install icons. | **Passing (2/2)** |
+
 ---
 
 ## 4. Current Test Results
-* **Test Files:** 21 passed (21 total)
-* **Total Assertions/Tests:** 81 passed (81 total)
+* **Test Files:** 25 passed (25 total)
+* **Total Assertions/Tests:** 95 passed (95 total)
 * **Success Rate:** **100%**
 * **Verification Command:** `npm.cmd test`
+
 
 

@@ -83,3 +83,10 @@ Tracks student milestones, badges, and streaks.
 * Compound index on `[accountStatus, deletionRequestedAt]` for efficient purge queries.
 * Compound index on `[email, type]` on `EmailVerification`.
 * Compound index on `[roadmapId, weekNumber, dayNumber]` for roadmap rendering.
+
+## 4. Data Retention, Backups & Deletion Lifecycle
+* **14-Day Account Deletion Grace Period:** Users can request deletion via their profile. The account transitions to `PENDING_DELETION` with `deletionRequestedAt = now()`. If the user logs in within 14 days, they can cancel the request with one click. After 14 days, a hard purge cascade completely deletes the user, their roadmaps, attempts, scorecards, and gamification state.
+* **Ephemeral Video Zero-Retention:** Video recordings are strictly ephemeral. No binary video content is ever stored in PostgreSQL. Once evaluation completes, files are immediately unlinked from disk and `videoDeletedAt` is stamped in `CommunicationSubmission`.
+* **Automated Daily Backups & PITR:** Neon and Supabase provide continuous write-ahead log (WAL) archiving with point-in-time recovery (PITR) allowing restoration to any millisecond within the retention window.
+* **Connection Pooling:** In serverless environments, connections are managed through PgBouncer connection pooling (`DATABASE_URL` with `-pooler` host on Neon or port `6543` on Supabase) to prevent database connection starvation.
+

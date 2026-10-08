@@ -321,4 +321,52 @@ The administrative portal (`/admin`) provides authorized staff with governance a
 3. **Server-Side RBAC Enforcement:** Every administrative API endpoint asserts `AdminService.requireAdmin(session.role)` on the server. Unprivileged requests are immediately rejected with HTTP `403 Forbidden`.
 4. **Tamper-Evident Audit Logging:** Privileged administrative actions (such as approving or rejecting questions) are logged to the `AuditLog` table with administrator ID, timestamp, and before/after metadata.
 
+---
+
+## 8. Phase 6: Security Hardening & Production Architecture
+
+### 8.1 Defense-in-Depth Security Matrix
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│               CAREERORBIT DEFENSE-IN-DEPTH MATRIX                      │
+├────────────────────────────────────────────────────────────────────────┤
+│ 1. Network & Browser Layer:                                            │
+│    • Strict-Transport-Security (HSTS max-age=63072000, preload)        │
+│    • Content-Security-Policy (CSP) restricting scripts, styles, frames │
+│    • X-Frame-Options: DENY (anti-clickjacking)                         │
+│    • X-Content-Type-Options: nosniff (anti-MIME sniffing)              │
+│    • Permissions-Policy: camera=(self), microphone=(self), geo=()      │
+│                                                                        │
+│ 2. Storage & File Layer:                                               │
+│    • sanitizeStorageKey: Neutralizes ../ and ..\ traversal sequences   │
+│    • Isolated temporary directory (os.tmpdir()/careerorbit_temp_...)   │
+│    • Immediate ephemeral unlinking upon evaluation (videoDeletedAt)    │
+│    • MIME whitelist validation (WebM, MP4, WAV, OGG only)              │
+│    • 50 MB maximum payload ceiling (HTTP 413)                          │
+│                                                                        │
+│ 3. Execution & Evaluation Layer:                                       │
+│    • Isolated containerized sandbox (Piston / Judge0)                  │
+│    • Arbitrary student code NEVER executes on Next.js server           │
+│    • 5,000ms hard timeout per test case                                │
+│    • Hidden test cases stripped from API payloads                      │
+│                                                                        │
+│ 4. Data & Authorization Layer:                                         │
+│    • Strict ownership check (record.userId === session.user.id)        │
+│    • Server-side admin RBAC throwing HTTP 403 on unprivileged requests │
+│    • Tamper-evident AuditLog records for administrative actions        │
+│    • 14-day soft deletion grace period with instant cancel capability   │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### 8.2 PWA & Offline Resilience
+* **W3C Web App Manifest (`/manifest.webmanifest`):** Configured via `src/app/manifest.ts` with standalone display mode, `#020617` background color, `#4f46e5` theme color, and high-fidelity orbital branding icons.
+* **Offline Fallback Route (`/offline`):** Accessible client route providing clear guidance on which features remain cached locally (downloaded notes, roadmap outline, completed score history) versus those requiring connectivity (live sandbox execution, AI tutor streaming, video upload).
+
+### 8.3 Serverless Production Database Architecture
+* **Connection Pooling:** Uses `@prisma/adapter-pg` driver adapter. Configured with connection pooling via Neon PgBouncer (`DATABASE_URL` with `-pooler` host) or Supabase transaction pooler (port `6543`) to prevent serverless lambda connection exhaustion.
+* **Continuous Point-In-Time Recovery (PITR):** Write-ahead log (WAL) archiving allows restoring database state to any prior second within the 7–30 day retention window.
+* **Safe Migration Workflow:** Standard deployment runs `npx prisma migrate deploy` non-destructively; production schema changes are reviewed before execution.
+
+
 

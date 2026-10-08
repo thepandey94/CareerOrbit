@@ -35,7 +35,23 @@ export async function POST(req: NextRequest) {
             { status: 413 }
           );
         }
-        mimeType = videoFile.type || "video/webm";
+        const rawMime = videoFile.type ? videoFile.type.toLowerCase().split(";")[0].trim() : "video/webm";
+        const ALLOWED_MIMES = [
+          "video/webm",
+          "video/mp4",
+          "video/ogg",
+          "audio/webm",
+          "audio/mp4",
+          "audio/wav",
+          "audio/ogg",
+        ];
+        if (!ALLOWED_MIMES.includes(rawMime)) {
+          return NextResponse.json(
+            { error: "Unsupported media format. Only WebM, MP4, OGG, and WAV media streams are permitted." },
+            { status: 415 }
+          );
+        }
+        mimeType = rawMime;
         const arrayBuf = await videoFile.arrayBuffer();
         videoBuffer = Buffer.from(arrayBuf);
       }
