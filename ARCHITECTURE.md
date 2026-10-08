@@ -125,3 +125,60 @@ CareerOrbit uses a unified full-stack architecture built on **Next.js 16.4.0 (Ap
 1. Active assessment mode and cheat query patterns are intercepted before reaching the LLM.
 2. The tutor explains underlying concepts, provides real-world analogies, and debugs logic without solving exam questions.
 3. If `GEMINI_API_KEY` is omitted or encounters network/rate limits, the application serves curated, verified knowledge base responses with truthful provider labeling.
+
+---
+
+## 5. Phase 3: Technical Round, Aptitude & Sandboxed Code Execution
+
+### 5.1 Sandboxed Code Execution Architecture (Java & Python)
+```
+[Student Browser]
+       │
+       │ (1) POST /api/technical/trial OR /api/playground/execute
+       ▼
+[Next.js Server API] ──(Validates Auth, Timer, Code Size <= 64KB)──┐
+       │                                                            │
+       │ (2) Prepares Sandbox Request                               │
+       ▼                                                            ▼
+[Isolated Execution Sandbox]                           [Secret Test Cases in DB]
+(Piston / Judge0 cgroups container)                    (Sample vs. Hidden Test Cases)
+  • Memory limit: 128MB                                             │
+  • Execution timeout: 5.0s                                         │
+  • No outbound network access                                      │
+       │                                                            │
+       │ (3) Returns stdout, stderr, exitCode, duration             │
+       ▼                                                            │
+[Next.js Grading Engine] <──────────────────────────────────────────┘
+  • Evaluates sample test cases (reveals input & output for debugging)
+  • Evaluates hidden test cases (STRICTLY OMITS inputs & outputs)
+       │
+       │ (4) Returns sanitized results to browser
+       ▼
+[Student Exam UI] (Passed count: 4/5; secret inputs NEVER leaked)
+```
+
+1. **Security Isolation:** Arbitrary student code is never executed on the host Next.js application server. It executes inside an isolated cgroup/container sandbox with a 5-second timeout and zero network egress.
+2. **Language Restriction:** Strictly restricted to **Java (OpenJDK)** and **Python (3.10+)**. Unsupported languages are rejected immediately.
+3. **Secret Test-Case Protection:** Inputs and expected outputs of hidden test cases are permanently protected on the server. The client browser only ever receives boolean pass/fail indicators and test counts.
+4. **Independent Playground:** A standalone Java/Python sandbox (`/playground`) allows freeform experimentation and custom stdin execution without altering official assessment scores.
+
+### 5.2 Technical Round Examination Specification
+* **25 Questions per Level:**
+  * 15 Conceptual knowledge questions
+  * 5 Code-output / debugging questions
+  * 5 Algorithmic coding problems with starter code, sample test cases, and hidden test cases
+* **Scoring Rubric:** Equal marks (1 mark per question = 25 marks total), zero negative marking.
+* **Timed Execution:** 60-minute countdown with automatic submission upon timeout.
+* **Trial Submissions:** Unlimited trial runs on sample test cases while the timer runs; only the final submission is officially graded against hidden test cases.
+* **Passing Threshold:** 60% (15/25 required to pass).
+* **Topic-Level Performance Review:** Topic competency breakdown highlighting weak areas (<60%) for focused revision. Unlimited retakes allow taking a fresh assessment of equivalent difficulty.
+
+### 5.3 Aptitude Module Specification
+* **25 Timed Questions:**
+  * 10 Quantitative Aptitude questions
+  * 8 Logical Reasoning questions
+  * 7 Verbal Ability questions
+* **Scoring Rubric:** Equal marks (1 mark each), no negative marking, 45-minute countdown with auto-submit on timeout.
+* **Passing Threshold:** 60% (15/25 required).
+* **Review & Diagnostics:** Category-level breakdown (Quantitative %, Logical %, Verbal %), weak-topic diagnosis, and comprehensive step-by-step solution explanations for every question.
+

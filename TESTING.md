@@ -36,10 +36,19 @@ npx.cmd vitest
 | `tests/assessment_scoring_threshold.test.ts` | Validates 60% passing threshold arithmetic (3/5 passes, 2/5 fails) and multi-skill diagnostic gap analysis. | **Passing (2/2)** |
 | `tests/ai_tutor_guardrail.test.ts` | Validates conceptual guidance, strict refusal during active assessments/exam cheating queries, and deterministic verified-content fallback. | **Passing (5/5)** |
 
+### Phase 3: Technical Round & Aptitude Suites
+| Test Suite | Purpose | Status |
+| :--- | :--- | :--- |
+| `tests/code_execution_engine.test.ts` | Validates isolated sandbox execution for Python and Java, strict rejection of unsupported languages, timeout bounds, and hidden test-case protection (inputs/outputs never leaked). | **Passing (5/5)** |
+| `tests/technical_round_scoring.test.ts` | Validates 25-question distribution (15 conceptual, 5 debugging/output, 5 coding), equal marks (1 mark each), no negative marking, 60% passing threshold (15/25), and topic-level weak area detection. | **Passing (4/4)** |
+| `tests/aptitude_module_scoring.test.ts` | Validates 25 timed questions (10 Quantitative, 8 Logical, 7 Verbal), equal marks, no negative marking, 60% passing threshold, and section breakdown calculations. | **Passing (3/3)** |
+| `tests/assessment_timer_expiration.test.ts` | Validates 60m/45m timer calculation, automatic transition to EXPIRED upon timeout, and multiple coding trial attempts during active testing while only final submission counts. | **Passing (3/3)** |
+
 ---
 
 ## 4. Current Test Results
-* **Test Files:** 10 passed (10 total)
-* **Total Assertions/Tests:** 36 passed (36 total)
+* **Test Files:** 14 passed (14 total)
+* **Total Assertions/Tests:** 51 passed (51 total)
 * **Success Rate:** **100%**
 * **Verification Command:** `npm.cmd test`
+

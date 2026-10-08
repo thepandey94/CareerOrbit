@@ -13,6 +13,10 @@ const envSchema = z.object({
   GEMINI_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default("CareerOrbit <onboarding@resend.dev>"),
   ADMIN_SETUP_SECRET: z.string().default("careerorbit_admin_initial_secret_change_in_production"),
+  CODE_EXECUTION_ENGINE: z.enum(["piston", "judge0", "mock"]).default("piston"),
+  PISTON_API_URL: z.string().default("https://emkc.org/api/v2/piston"),
+  JUDGE0_API_URL: z.string().optional(),
+  JUDGE0_API_KEY: z.string().optional(),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
@@ -24,6 +28,10 @@ export const env = envSchema.parse({
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   EMAIL_FROM: process.env.EMAIL_FROM,
   ADMIN_SETUP_SECRET: process.env.ADMIN_SETUP_SECRET,
+  CODE_EXECUTION_ENGINE: process.env.CODE_EXECUTION_ENGINE,
+  PISTON_API_URL: process.env.PISTON_API_URL,
+  JUDGE0_API_URL: process.env.JUDGE0_API_URL,
+  JUDGE0_API_KEY: process.env.JUDGE0_API_KEY,
   NODE_ENV: process.env.NODE_ENV,
 });
 

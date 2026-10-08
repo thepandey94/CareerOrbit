@@ -49,6 +49,22 @@ CareerOrbit is a production-grade, full-stack, AI-assisted career preparation pl
   * **Academic Integrity Guardrail:** Strictly refuses to reveal direct answers or cheat solutions during active assessments.
   * **Deterministic Offline Fallback:** Seamlessly serves rich, verified subject explanations and mentor tips when external AI is offline or API keys are unconfigured.
 
+### Phase 3: Technical Round & Aptitude
+* **Official Technical Interview Round:**
+  * **25 Questions per Level:** 15 conceptual knowledge questions, 5 code-output / debugging questions, and 5 algorithmic coding problems.
+  * **Equal Marks & No Negative Marking:** 1 mark per question (25 marks total), ensuring fair and transparent assessment.
+  * **Timed 60-Minute Execution:** Continuous countdown timer with automatic submission on expiration.
+  * **Multiple Coding Trials:** Students can run and refine coding solutions against sample test cases unlimited times while the timer runs; only the final submission is officially graded.
+  * **Hidden Test-Case Protection:** Server evaluates against hidden test cases without ever leaking hidden inputs or outputs to client network requests.
+  * **60% Passing Threshold:** 15/25 required to pass; provides topic-level competency breakdown and allows unlimited fresh retakes of equivalent difficulty upon failure.
+* **Aptitude Assessment Module:**
+  * **25 Questions:** 10 Quantitative Aptitude, 8 Logical Reasoning, and 7 Verbal Ability questions.
+  * **45-Minute Timed Session:** Automatic submission on timeout with a 60% passing threshold.
+  * **Weak-Topic Diagnostics:** Category-by-category breakdown and comprehensive step-by-step solutions for every question.
+* **Isolated Sandboxed Execution (Java & Python):**
+  * Official execution engine strictly supporting **Java** and **Python** via sandboxed environments (Piston / Judge0). Arbitrary code never runs on the Next.js host server.
+  * **Standalone Code Playground:** Freeform Java/Python editor (`/playground`) with custom stdin support that does not impact assessment scores.
+
 ---
 
 ## 🚀 Quickstart & Local Setup

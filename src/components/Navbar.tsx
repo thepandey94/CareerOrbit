@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
-import { Compass, User, LogOut, Menu, X, ShieldAlert } from "lucide-react";
+import { Compass, User, LogOut, Menu, X, ShieldAlert, Code2, Brain, Terminal } from "lucide-react";
 
 interface UserSession {
   id: string;
@@ -63,9 +63,20 @@ export function Navbar() {
             Our Method
           </Link>
           {user && (
-            <Link href="/roadmap" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1">
-              <Compass className="w-4 h-4" /> My Roadmap
-            </Link>
+            <>
+              <Link href="/roadmap" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1">
+                <Compass className="w-4 h-4" /> Roadmap
+              </Link>
+              <Link href="/technical" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold flex items-center gap-1">
+                <Code2 className="w-4 h-4 text-indigo-500" /> Technical Round
+              </Link>
+              <Link href="/aptitude" className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold flex items-center gap-1">
+                <Brain className="w-4 h-4 text-blue-500" /> Aptitude
+              </Link>
+              <Link href="/playground" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold flex items-center gap-1">
+                <Terminal className="w-4 h-4 text-emerald-500" /> Playground
+              </Link>
+            </>
           )}
           {user?.role === "ADMIN" && (
             <Link href="/admin" className="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 hover:underline">
@@ -173,6 +184,27 @@ export function Navbar() {
                 className="block text-sm font-semibold text-blue-600 dark:text-blue-400"
               >
                 My Roadmap
+              </Link>
+              <Link
+                href="/technical"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-sm font-semibold text-indigo-600 dark:text-indigo-400"
+              >
+                Technical Round (25 Qs)
+              </Link>
+              <Link
+                href="/aptitude"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-sm font-semibold text-blue-600 dark:text-blue-400"
+              >
+                Aptitude Assessment (25 Qs)
+              </Link>
+              <Link
+                href="/playground"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-sm font-semibold text-emerald-600 dark:text-emerald-400"
+              >
+                Code Playground (Java & Python)
               </Link>
               <Link
                 href="/onboarding"
