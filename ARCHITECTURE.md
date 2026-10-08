@@ -182,3 +182,64 @@ CareerOrbit uses a unified full-stack architecture built on **Next.js 16.4.0 (Ap
 * **Passing Threshold:** 60% (15/25 required).
 * **Review & Diagnostics:** Category-level breakdown (Quantitative %, Logical %, Verbal %), weak-topic diagnosis, and comprehensive step-by-step solution explanations for every question.
 
+---
+
+## 6. Phase 4: Mock Video Interview & Technical Communication Architecture
+
+### 6.1 Ephemeral Video Processing & Zero-Retention Privacy Lifecycle
+```
+[Student Browser]
+       │
+       │ (1) User grants explicit consent and tests Camera & Mic
+       ▼
+[Interactive Studio Room]
+       │
+       │ (2) 5-Minute Strategy Prep (Briefing, Audience, Scratchpad)
+       │ (3) Up to 7-Minute Timed Presentation (MediaRecorder chunks)
+       ▼
+[Next.js Server API: POST /api/communication/upload]
+       │
+       │ (4) Writes temporary video stream to isolated temp storage
+       ▼
+[Evaluation Pipeline]
+  ├── Multimodal Analysis (Gemini 2.5 Flash via @google/genai)
+  └── Speech Analytics (WPM cadence, filler words regex, grammar & structure)
+       │
+       │ (5) Deletion Lifecycle Triggered in try/catch/finally block
+       ▼
+[Ephemeral Storage Purge]
+  • Immediately unlinks & permanently deletes temporary video file
+  • Stamps `videoDeletedAt = new Date()` in database
+       │
+       │ (6) Stores structured scorecard (scores, feedback, WPM) in DB
+       ▼
+[Verifiable Scorecard Receipt]
+  • Displays overall score (0–100), 5-category breakdown, and WPM
+  • Includes cryptographically verified zero-retention deletion timestamp
+```
+
+1. **Zero-Retention Guarantee:** Video recordings are strictly ephemeral artifacts. Temporary streams are unlinked and permanently erased immediately upon scoring. Only structured rubric scores, speech metrics, and textual feedback are persisted.
+2. **Informed Consent & Pre-Flight Testing:** Students must verify camera and microphone inputs and provide explicit informed consent before entering any presentation room.
+3. **Accent, Demographic & Hardware Neutrality:** System prompts and heuristic algorithms explicitly forbid penalties for regional, international, or ethnic accents, skin tone, clothing, lighting artifacts, or webcam resolution. Pseudoscience (micro-expression emotion detection, lie detection) is strictly banned.
+
+### 6.2 5-Dimension Evaluation Rubric & Normalization
+
+$$\text{Overall Score} = \begin{cases} 
+\text{Content} + \text{Clarity} + \text{Grammar} + \text{Pace} + \text{VisualDelivery} & \text{if visual feed is reliable (max 100)} \\
+\text{Round}\left(\frac{\text{Content} + \text{Clarity} + \text{Grammar} + \text{Pace}}{80} \times 100\right) & \text{if visual feed is degraded or audio-only}
+\end{cases}$$
+
+* **Passing Threshold:** 60% (60/100).
+* **Category 1: Content & Structure (0–20 pts):** Introduction framing, problem articulation, architectural trade-offs, and concluding summary.
+* **Category 2: Clarity & Vocabulary (0–20 pts):** Precision of technical engineering terminology, conciseness, and jargon explanation.
+* **Category 3: Grammar & Syntax (0–20 pts):** Sentence structure, professional tense, and transitional cohesion.
+* **Category 4: Pace & Filler Words (0–20 pts):**
+  * Speaking cadence: Optimal (110–165 WPM), Acceptable (90–110 or 165–185 WPM), Suboptimal (<90 or >185 WPM).
+  * Verbal filler density: Pattern matching for *um, uh, er, ah, like, you know, basically, actually, literally, sort of, kind of, i mean*.
+* **Category 5: Visual Delivery (0–20 pts):** Natural camera orientation and posture stability. Automatically excluded with normalized scoring if lighting or camera feed is unavailable or degraded.
+
+### 6.3 Dual Evaluator Engine & Fallback Guarantee
+1. **Primary: Gemini 2.5 Flash (`@google/genai`):** When `GEMINI_API_KEY` is present, executes structured multimodal evaluation with strict ethical directives.
+2. **Fallback: Heuristic Speech & Transcript Analyzer:** When offline, in testing environments, or when API limits are reached, seamlessly executes deterministic rule-based linguistic and pacing analysis. Always truthfully labeled in the scorecard.
+
+

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
-import { Compass, User, LogOut, Menu, X, ShieldAlert, Code2, Brain, Terminal } from "lucide-react";
+import { Compass, User, LogOut, Menu, X, ShieldAlert, Code2, Brain, Terminal, Video } from "lucide-react";
 
 interface UserSession {
   id: string;
@@ -52,15 +52,12 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+        <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-600 dark:text-slate-300">
           <Link href="/#tracks" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             Career Tracks
           </Link>
           <Link href="/#modules" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-            Preparation Modules
-          </Link>
-          <Link href="/#method" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-            Our Method
+            Modules
           </Link>
           {user && (
             <>
@@ -68,10 +65,13 @@ export function Navbar() {
                 <Compass className="w-4 h-4" /> Roadmap
               </Link>
               <Link href="/technical" className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold flex items-center gap-1">
-                <Code2 className="w-4 h-4 text-indigo-500" /> Technical Round
+                <Code2 className="w-4 h-4 text-indigo-500" /> Technical
               </Link>
               <Link href="/aptitude" className="text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 font-semibold flex items-center gap-1">
                 <Brain className="w-4 h-4 text-blue-500" /> Aptitude
+              </Link>
+              <Link href="/communication" className="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 font-semibold flex items-center gap-1">
+                <Video className="w-4 h-4 text-purple-500" /> Interview
               </Link>
               <Link href="/playground" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-semibold flex items-center gap-1">
                 <Terminal className="w-4 h-4 text-emerald-500" /> Playground
@@ -198,6 +198,13 @@ export function Navbar() {
                 className="block text-sm font-semibold text-blue-600 dark:text-blue-400"
               >
                 Aptitude Assessment (25 Qs)
+              </Link>
+              <Link
+                href="/communication"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-sm font-semibold text-purple-600 dark:text-purple-400"
+              >
+                Interview & Communication (7-Min)
               </Link>
               <Link
                 href="/playground"

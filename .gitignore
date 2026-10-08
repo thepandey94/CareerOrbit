@@ -40,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# media & temporary recordings
+*.webm
+*.mp4
+*.mkv
+*.wav
+*.mp3
+/temp_recordings
+/uploads

@@ -44,11 +44,19 @@ npx.cmd vitest
 | `tests/aptitude_module_scoring.test.ts` | Validates 25 timed questions (10 Quantitative, 8 Logical, 7 Verbal), equal marks, no negative marking, 60% passing threshold, and section breakdown calculations. | **Passing (3/3)** |
 | `tests/assessment_timer_expiration.test.ts` | Validates 60m/45m timer calculation, automatic transition to EXPIRED upon timeout, and multiple coding trial attempts during active testing while only final submission counts. | **Passing (3/3)** |
 
+### Phase 4: Mock Video Interview & Communication Presentation Suites
+| Test Suite | Purpose | Status |
+| :--- | :--- | :--- |
+| `tests/communication_scoring_rubric.test.ts` | Validates equal 20-point weighting across 5 categories, normalized scoring over 4 categories when visual delivery is excluded/unreliable, 60% passing threshold (59 fails, 60 passes), and score boundary clamping. | **Passing (4/4)** |
+| `tests/communication_speech_metrics.test.ts` | Validates quantitative speaking cadence (WPM) across durations, cadence tier classifications (Optimal: 110–165 WPM), comprehensive verbal filler detection regex (*um, uh, like, you know, etc.*), and filler density tier scoring. | **Passing (4/4)** |
+| `tests/communication_privacy_lifecycle.test.ts` | Validates ephemeral temporary recording storage, verifiable immediate unlinking and deletion, `videoDeletedAt` timestamp generation, and automatic stale file garbage collection. | **Passing (3/3)** |
+| `tests/communication_duration_limits.test.ts` | Validates 5-minute preparation period (300s) and up to 7-minute presentation duration (420s), topic registry catalog integrity, multimodal evaluator pipeline, and audio-only fallback normalization. | **Passing (3/3)** |
+
 ---
 
 ## 4. Current Test Results
-* **Test Files:** 14 passed (14 total)
-* **Total Assertions/Tests:** 51 passed (51 total)
+* **Test Files:** 18 passed (18 total)
+* **Total Assertions/Tests:** 65 passed (65 total)
 * **Success Rate:** **100%**
 * **Verification Command:** `npm.cmd test`
 

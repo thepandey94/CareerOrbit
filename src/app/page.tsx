@@ -195,34 +195,59 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3">
-              <div className="flex items-center gap-3">
-                <Terminal className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">2. Technical Round & Playground</h3>
+            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Terminal className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">2. Technical Round & Playground</h3>
+                </div>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  25-question timed round consisting of 15 conceptual questions, 5 debugging questions, and 5 coding problems. Evaluated against secret test cases inside an isolated sandbox. Includes a standalone practice playground.
+                </p>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                25-question timed round consisting of 15 conceptual questions, 5 debugging questions, and 5 coding problems. Evaluated against secret test cases inside an isolated sandbox. Includes a standalone practice playground.
-              </p>
+              <div className="pt-2 flex items-center gap-3">
+                <Link href="/technical" className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                  Launch Technical Round <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <span className="text-slate-300 dark:text-slate-700">•</span>
+                <Link href="/playground" className="text-xs font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+                  Playground
+                </Link>
+              </div>
             </div>
 
-            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3">
-              <div className="flex items-center gap-3">
-                <Brain className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">3. Aptitude Module</h3>
+            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Brain className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">3. Aptitude Module</h3>
+                </div>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  25 timed questions balanced across Quantitative Aptitude (10), Logical Reasoning (8), and Verbal Ability (7). Detailed weak-topic breakdowns identify exact areas for revision.
+                </p>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                25 timed questions balanced across Quantitative Aptitude (10), Logical Reasoning (8), and Verbal Ability (7). Detailed weak-topic breakdowns identify exact areas for revision.
-              </p>
+              <div className="pt-2">
+                <Link href="/aptitude" className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
+                  Start Aptitude Assessment <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
 
-            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3">
-              <div className="flex items-center gap-3">
-                <Video className="w-6 h-6 text-rose-600 dark:text-rose-400" />
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">4. Communication & Presentation</h3>
+            <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <Video className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">4. Communication & Presentation</h3>
+                </div>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  5-minute preparation followed by up to 7 minutes of presentation. Evaluated across 5 dimensions with speech pace (WPM) and filler word analysis. Raw video recordings are immediately and permanently erased after scoring.
+                </p>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                5-minute preparation followed by up to 7 minutes of webcam presentation. Evaluated on speech pace, clarity, vocabulary, grammar, and engagement. Raw video recordings are immediately and permanently erased after scoring to ensure privacy.
-              </p>
+              <div className="pt-2">
+                <Link href="/communication" className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline flex items-center gap-1">
+                  Enter Presentation Studio <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

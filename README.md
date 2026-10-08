@@ -65,6 +65,22 @@ CareerOrbit is a production-grade, full-stack, AI-assisted career preparation pl
   * Official execution engine strictly supporting **Java** and **Python** via sandboxed environments (Piston / Judge0). Arbitrary code never runs on the Next.js host server.
   * **Standalone Code Playground:** Freeform Java/Python editor (`/playground`) with custom stdin support that does not impact assessment scores.
 
+### Phase 4: Mock Video Interview & Communication Presentation
+* **Interactive Presentation Studio (`/communication`):**
+  * **5-Minute Strategic Preparation:** Structured scenario briefing with target audience expectations, key talking points checklist, and interactive notes scratchpad that stays visible during recording.
+  * **Up to 7-Minute Timed Presentation:** Timed recording with framing guide, live microphone VU meter visualizer, and Web Speech API live transcription.
+  * **Zero-Retention Ephemeral Privacy Lifecycle:** Video files are evaluated ephemerally and immediately, permanently deleted upon scoring. Only structured rubric scores, speech metrics, and textual feedback are persisted.
+* **5-Dimension Equal-Weight Rubric (60% Passing Mark):**
+  * **Content & Structure (20 pts):** Introduction, problem framing, architectural trade-offs, and concluding summary.
+  * **Clarity & Technical Vocabulary (20 pts):** Precision of engineering terminology, conciseness, and jargon explanation.
+  * **Grammar & Syntax (20 pts):** Sentence structure, professional tense, and transitional cohesion.
+  * **Pace & Filler Words (20 pts):** Words per minute (WPM, optimal 110–165 WPM) and verbal filler detection (*um, uh, like, you know, basically, etc.*).
+  * **Visual Delivery (20 pts):** Natural camera eye contact and posture stability. Automatically excluded with normalized scoring across remaining 4 categories if video feed is degraded or audio-only.
+* **Ethical AI Evaluation Safeguards:**
+  * Strict demographic, accent, and hardware neutrality: zero penalties for regional accents, skin tone, clothing, or webcam resolution.
+  * Pseudoscience (micro-expression emotion detection, lie detection) is strictly banned.
+  * Dual evaluation engine: Google Gemini 2.5 Flash (`@google/genai`) with truthful fallback to a deterministic heuristic speech and transcript analyzer.
+
 ---
 
 ## 🚀 Quickstart & Local Setup
