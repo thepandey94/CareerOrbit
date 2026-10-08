@@ -1,0 +1,305 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  PENDING_DELETION
+}
+
+enum VerificationType {
+  REGISTRATION
+  PASSWORD_RESET
+  EMAIL_CHANGE
+}
+
+enum CareerTrack {
+  SOFTWARE_ENGINEER
+  WEB_DEVELOPER
+  DATA_ANALYST
+}
+
+enum TaskType {
+  LEARNING
+  PRACTICE
+  ASSESSMENT
+}
+
+enum TaskStatus {
+  LOCKED
+  AVAILABLE
+  COMPLETED
+}
+
+enum QuestionType {
+  CONCEPTUAL
+  CODE_OUTPUT
+  DEBUGGING
+  CODING_PROBLEM
+}
+
+enum QuestionDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AssessmentType {
+  DIAGNOSTIC
+  DAILY
+  TECHNICAL
+  APTITUDE
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  EXPIRED
+}
+
+enum CommunicationStatus {
+  PENDING_EVALUATION
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id                   String                   @id @default(uuid())
+  email                String                   @unique
+  userId               String                   @unique
+  passwordHash         String
+  fullName             String
+  course               String
+  branch               String
+  semester             Int
+  role                 Role                     @default(STUDENT)
+  avatarUrl            String?
+  userIdChangedAt      DateTime?
+  deletionRequestedAt  DateTime?
+  accountStatus        AccountStatus            @default(ACTIVE)
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+
+  careerProfile        CareerProfile?
+  emailVerifications   EmailVerification[]
+  roadmaps             Roadmap[]
+  assessmentAttempts   AssessmentAttempt[]
+  communicationSubmissions CommunicationSubmission[]
+  gamificationState    GamificationState?
+  auditLogs            AuditLog[]
+
+  @@index([email])
+  @@index([userId])
+  @@index([accountStatus, deletionRequestedAt])
+}
+
+model EmailVerification {
+  id          String           @id @default(uuid())
+  email       String
+  otpHash     String
+  type        VerificationType
+  attempts    Int              @default(0)
+  expiresAt   DateTime
+  verifiedAt  DateTime?
+  createdAt   DateTime         @default(now())
+
+  user        User?            @relation(fields: [email], references: [email], onDelete: Cascade)
+
+  @@index([email, type])
+  @@index([expiresAt])
+}
+
+model CareerProfile {
+  id                      String      @id @default(uuid())
+  userId                  String      @unique
+  selectedTrack           CareerTrack
+  targetWeeks             Int         @default(12)
+  targetDate              DateTime?
+  dailyMinutesTarget      Int         @default(90)
+  diagnosticScores        Json?
+  compatibilityBreakdown  Json?
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
+
+  user                    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Roadmap {
+  id          String        @id @default(uuid())
+  userId      String
+  trackId     CareerTrack
+  title       String
+  currentWeek Int           @default(1)
+  currentDay  Int           @default(1)
+  isCompleted Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks       RoadmapTask[]
+
+  @@index([userId, trackId])
+}
+
+model RoadmapTask {
+  id              String            @id @default(uuid())
+  roadmapId       String
+  weekNumber      Int
+  dayNumber       Int
+  title           String
+  description     String            @db.Text
+  taskType        TaskType
+  durationMinutes Int               @default(30)
+  prerequisites   Json              @default("[]")
+  status          TaskStatus        @default(LOCKED)
+  completedAt     DateTime?
+
+  roadmap         Roadmap           @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  resources       CuratedResource[]
+
+  @@index([roadmapId, weekNumber, dayNumber])
+  @@index([status])
+}
+
+model CuratedResource {
+  id            String       @id @default(uuid())
+  taskId        String
+  title         String
+  url           String
+  resourceType  String
+  isVerified    Boolean      @default(true)
+  lastCheckedAt DateTime     @default(now())
+
+  task          RoadmapTask  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+}
+
+model Question {
+  id                  String             @id @default(uuid())
+  track               CareerTrack
+  topic               String
+  questionType        QuestionType
+  difficulty          QuestionDifficulty
+  prompt              String             @db.Text
+  options             Json?
+  correctOption       String?
+  sampleTestCases     Json?
+  hiddenTestCases     Json?
+  starterCode         Json?
+  solutionExplanation String             @db.Text
+  verificationStatus  VerificationStatus @default(PENDING)
+  createdBy           String
+  createdAt           DateTime           @default(now())
+
+  submissionAnswers   SubmissionAnswer[]
+
+  @@index([track, topic, difficulty])
+  @@index([verificationStatus])
+}
+
+model AssessmentAttempt {
+  id             String             @id @default(uuid())
+  userId         String
+  assessmentType AssessmentType
+  level          Int                @default(1)
+  score          Int                @default(0)
+  totalQuestions Int                @default(25)
+  passed         Boolean            @default(false)
+  startedAt      DateTime           @default(now())
+  submittedAt    DateTime?
+  expiresAt      DateTime
+  status         AttemptStatus      @default(IN_PROGRESS)
+
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers        SubmissionAnswer[]
+
+  @@index([userId, assessmentType])
+  @@index([status, expiresAt])
+}
+
+model SubmissionAnswer {
+  id              String            @id @default(uuid())
+  attemptId       String
+  questionId      String
+  selectedOption  String?
+  submittedCode   String?           @db.Text
+  language        String?
+  passedTests     Int               @default(0)
+  totalTests      Int               @default(0)
+  executionStatus String?
+  scoreAwarded    Int               @default(0)
+
+  attempt         AssessmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question        Question          @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  @@index([attemptId])
+  @@index([questionId])
+}
+
+model CommunicationSubmission {
+  id                  String              @id @default(uuid())
+  userId              String
+  topicTitle          String
+  durationSeconds     Int
+  storageKey          String
+  contentScore        Int                 @default(0)
+  clarityScore        Int                 @default(0)
+  grammarScore        Int                 @default(0)
+  paceScore           Int                 @default(0)
+  visualDeliveryScore Int                 @default(0)
+  overallScore        Int                 @default(0)
+  passed              Boolean             @default(false)
+  feedbackJson        Json
+  status              CommunicationStatus @default(PENDING_EVALUATION)
+  videoDeletedAt      DateTime?
+  createdAt           DateTime            @default(now())
+
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model GamificationState {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  currentStreak     Int       @default(0)
+  longestStreak     Int       @default(0)
+  lastActiveDate    DateTime?
+  streakFreezeCount Int       @default(1)
+  earnedBadges      Json      @default("[]")
+  totalPoints       Int       @default(0)
+  updatedAt         DateTime  @updatedAt
+
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  eventType String
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([eventType])
+}

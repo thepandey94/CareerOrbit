@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CareerOrbit — AI-Assisted Career Preparation Platform
 
-## Getting Started
+> **“Your journey. Your skills. Your career.”**
 
-First, run the development server:
+CareerOrbit is a production-grade, full-stack, AI-assisted career preparation platform built specifically for students. It guides aspiring developers and analysts through personalized roadmaps, verified skill gap diagnostics, timed technical coding rounds evaluated in an isolated sandbox, aptitude assessments, and video presentation evaluations.
 
+---
+
+## 🌟 Key Features (Phase 1 Foundation)
+
+* **Robust Authentication & Security:**
+  * Real email verification using 6-digit cryptographic OTPs with 10-minute expiry and rate-limiting.
+  * OWASP-standard **Argon2id** password hashing (`@node-rs/argon2`, 64MB memory cost).
+  * Dual login supporting either **Email + Password** or unique **User ID + Password**.
+  * Stateless, encrypted, tamper-proof HTTP-only cookie sessions via **iron-session** (AES-256-GCM).
+  * Enforced **90-day cooldown** on User ID changes with smart alternative suggestions if an ID is taken.
+  * **14-day account deletion grace period** with immediate access locking and authenticated one-click cancellation.
+* **Database & Persistence:**
+  * **Prisma 7.10.0** with PostgreSQL driver adapter (`@prisma/adapter-pg`).
+  * 11 comprehensive relational models covering users, roadmaps, curated resources, question banks, assessment attempts, code answers, communication presentations, and gamification state.
+* **Modern Accessible Interface:**
+  * Built with **Next.js 16.4.0 (App Router)** and **React 19.3.0**.
+  * Coordinated, accessible light/dark theme system with persistent user preference.
+  * Responsive navigation, semantic HTML, and zero fabricated testimonials or placement numbers.
+* **Protected Administrative Control:**
+  * Server-side role-based access control (RBAC) on `/admin/*` and administrative API routes.
+  * Secure initial admin provisioning via an environment setup secret.
+
+---
+
+## 🚀 Quickstart & Local Setup
+
+### 1. Prerequisites
+* **Node.js:** `v20.0.0` or higher (`v24.x` recommended).
+* **npm:** `v10.x` or higher.
+* **PostgreSQL:** A running PostgreSQL database (e.g. Neon, Supabase, or local PostgreSQL).
+
+### 2. Installation
+Clone the repository and install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm.cmd install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Environment Configuration
+Copy `.env.example` to `.env.local`:
+```bash
+cp .env.example .env.local
+```
+Update the values in `.env.local`:
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/careerorbit?schema=public"
+SESSION_SECRET="careerorbit_session_secret_at_least_32_characters_super_secure!"
+ADMIN_SETUP_SECRET="careerorbit_admin_initial_secret_change_in_production"
+```
+*(When `RESEND_API_KEY` is omitted during local development, verification OTPs are logged safely to the terminal console).*
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Prisma Generation & Database Push
+Generate the Prisma 7 client:
+```bash
+npm.cmd run prisma:generate
+```
+Push the schema to your database when ready:
+```bash
+npx.cmd prisma db push
+```
+To visually inspect and manage database records in your web browser:
+```bash
+npm.cmd run prisma:studio
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 5. Running the Application
+Start the development server:
+```bash
+npm.cmd run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🧪 Running Automated Tests
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Run the Vitest test suite:
+```bash
+npm.cmd test
+```
+To run tests in interactive watch mode:
+```bash
+npx.cmd vitest
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📁 Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+├── prisma/
+│   └── schema.prisma        # 11 relational database models & enums
+├── src/
+│   ├── app/                 # Next.js 16 App Router pages & API routes
+│   │   ├── (auth)/          # Registration, login, and deletion flows
+│   │   ├── admin/           # Administrative portal & setup
+│   │   ├── api/             # Secure server-side API handlers
+│   │   ├── profile/         # Student profile & User ID settings
+│   │   ├── globals.css      # Design tokens & dark mode overrides
+│   │   ├── layout.tsx       # Root layout with ThemeProvider & Navbar
+│   │   └── page.tsx         # Public marketing & track landing page
+│   ├── components/          # Reusable accessible UI components (Navbar, Footer, ThemeToggle)
+│   └── lib/                 # Core server libraries
+│       ├── auth/            # Argon2id hashing, OTP crypto, iron-session
+│       ├── email/           # Resend email delivery & dev logging
+│       ├── services/        # Business logic (AuthService, UserService, AdminService)
+│       ├── db.ts            # PrismaClient singleton with adapter-pg
+│       └── env.ts           # Zod environment variable validation
+├── tests/                   # Automated Vitest integration test suites
+├── prisma.config.ts         # Prisma 7 configuration file
+└── vitest.config.mts        # Test runner configuration
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📚 Documentation Links
+* [Architecture Guide](ARCHITECTURE.md)
+* [Database Schema & Constraints](DATABASE.md)
+* [Security & Threat Mitigation](SECURITY.md)
+* [Environment Variable Reference](ENVIRONMENT.md)
+* [Deployment Guide](DEPLOYMENT.md)
+* [Testing Strategy](TESTING.md)
